@@ -51,15 +51,17 @@ public class Mutatable extends Genome {
         List<Integer[]> potentialConnections = new ArrayList<Integer[]>();
         List<Node> localNodes = getLocalNodes();
         
-        for (int n1 = 0; n1 < localNodes.size(); n1++) {
-            float n1Layer = localNodes.get(n1).getLayer();
-            for (int n2 = n1+1; n2 < localNodes.size(); n2++) {
-                float n2Layer = localNodes.get(n2).getLayer();
+        for (int i1 = 0; i1 < localNodes.size(); i1++) {
+            Node node1 = localNodes.get(i1);
+            float node1Layer = node1.getLayer();
+            for (int i2 = i1+1; i2 < localNodes.size(); i2++) {
+                Node node2 = localNodes.get(i2);
+                float node2Layer = node2.getLayer();
                 
-                if (n1Layer != n2Layer) {
+                if (node1Layer != node2Layer) {
                     int in, out;
-                    if (n1Layer < n2Layer) {in = n1; out = n2;}
-                    else {out = n1; in = n2;}
+                    if (node1Layer < node2Layer) {in = node1.getID(); out = node2.getID();}
+                    else {out = node1.getID(); in = node2.getID();}
 
                     if (!hasConnection(in, out))
                         potentialConnections.add(new Integer[]{in, out});
@@ -160,7 +162,7 @@ public class Mutatable extends Genome {
             List<Connection> enabledConnections = mutatable.getEnabledConnections();
             System.out.println("size = " + enabledConnections.size());
             System.out.println(enabledConnections);
-            for (Connection c : mutatable.connections) System.out.println(c);
+            System.out.println(mutatable);
 
             System.out.println("Calling mutatable.getPotentialConnections()...");
             List<Integer[]> potentialConnections = mutatable.getPotentialConnections();

@@ -49,7 +49,10 @@ public class Genome {
     }
 
     public Genome(Genome parent) {
-        connections = new ArrayList<>(parent.connections);
+        connections = new ArrayList<>();
+        for (Connection pc : parent.connections) {
+            connections.add(new Connection(pc));
+        }
     }
 
     public List<Connection> getConnections() {return Collections.unmodifiableList(connections);}
