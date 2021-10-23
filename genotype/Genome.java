@@ -57,6 +57,15 @@ public class Genome {
 
     public List<Connection> getConnections() {return Collections.unmodifiableList(connections);}
 
+    public Connection getConnection(int in, int out) {
+        for (Connection c : connections) {
+            if (c.getIn() == in && c.getOut() == out) {
+                return c;
+            }
+        }
+        return null;
+    }
+
     public String toString() {
         String endl = "\n";
         String value = "Genome" + endl;

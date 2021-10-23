@@ -17,26 +17,23 @@ public class Mutatable extends Genome {
     }
 
     public List<Node> getLocalNodes() {
-        Set<Integer> nodeIDs = new TreeSet<>();
+        Set<Integer> localNodeIDs = new TreeSet<>();
+
+        for (int i = 0; i < nodes.size() && nodes.get(i).getType() != NodeType.HIDDEN; i++) {
+            localNodeIDs.add(nodes.get(i).getID());
+        }
         for (Connection c : connections) {
             if (c.isEnabled()) {
-                nodeIDs.add(c.getIn());
-                nodeIDs.add(c.getOut());
+                localNodeIDs.add(c.getIn());
+                localNodeIDs.add(c.getOut());
             }
         }
 
         List<Node> localNodes = new ArrayList<>();
-        for (Integer id : nodeIDs) {
+        for (Integer id : localNodeIDs) {
             localNodes.add(getNode(id));
         }
         return localNodes;
-    }
-
-    public boolean hasConnection(int in, int out) { //Returns true if connection exists and is enabled
-        for (Connection c : connections) {
-            if (c.isEnabled() && c.getIn() == in && c.getOut() == out) return true;
-        }
-        return false;
     }
 
     public List<Connection> getEnabledConnections() {
@@ -47,8 +44,8 @@ public class Mutatable extends Genome {
         return enabledConnections;
     }
 
-    public List<Integer[]> getPotentialConnections() { //Returns a list of potential connections that currently don't exist.
-        List<Integer[]> potentialConnections = new ArrayList<Integer[]>();
+    public List<Integer[]> getPossibleConnections() { //Returns a list of possible connections that do or don't exist.
+        List<Integer[]> possibleConnections = new ArrayList<Integer[]>();
         List<Node> localNodes = getLocalNodes();
         
         for (int i1 = 0; i1 < localNodes.size(); i1++) {
@@ -63,13 +60,12 @@ public class Mutatable extends Genome {
                     if (node1Layer < node2Layer) {in = node1.getID(); out = node2.getID();}
                     else {out = node1.getID(); in = node2.getID();}
 
-                    if (!hasConnection(in, out))
-                        potentialConnections.add(new Integer[]{in, out});
+                    possibleConnections.add(new Integer[]{in, out});
                 }
             }
         }
         
-        return potentialConnections;
+        return possibleConnections;
     }
 
     public Connection getRandomConnection() { //Gets an enabled connection
@@ -111,11 +107,15 @@ public class Mutatable extends Genome {
     }
 
     public Connection addConnection() {
-        List<Integer[]> potentialConnections = getPotentialConnections();
+        List<Integer[]> possibleConnections = getPossibleConnections();
 
-        if (potentialConnections.size() > 0) {
-            int index = Resource.random.nextInt(potentialConnections.size());
-            Integer[] line = potentialConnections.get(index);
+        if (possibleConnections.size() > 0) {
+            int index = Resource.random.nextInt(possibleConnections.size());
+            Integer[] line = possibleConnections.get(index);
+
+            Connection oldConnection = getConnection(line[0], line[1]);
+            if (oldConnection != null) oldConnection.disable();
+
             double weight = Resource.nextSignedDouble(Settings.MUTATION_NEW_CONNECTION_WEIGHT_MAX);
             Connection connection = new Connection(line[0], line[1], weight);
             connections.add(connection);
@@ -164,13 +164,10 @@ public class Mutatable extends Genome {
             System.out.println(enabledConnections);
             System.out.println(mutatable);
 
-            System.out.println("Calling mutatable.getPotentialConnections()...");
-            List<Integer[]> potentialConnections = mutatable.getPotentialConnections();
-            System.out.println("size = " + potentialConnections.size());
-            for (Integer[] line : potentialConnections) System.out.println(line[0] + " -> " + line[1]);
-
-            System.out.println("Calling mutatable.hasConnection(0, 4)...");
-            System.out.println(mutatable.hasConnection(0, 4));
+            System.out.println("Calling mutatable.getPossibleConnections()...");
+            List<Integer[]> possibleConnections = mutatable.getPossibleConnections();
+            System.out.println("size = " + possibleConnections.size());
+            for (Integer[] line : possibleConnections) System.out.println(line[0] + " -> " + line[1]);
 
             System.out.println();
             test++;

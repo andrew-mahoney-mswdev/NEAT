@@ -53,8 +53,7 @@ public class Crossover extends Genome {
         for (int i = 0; i < 16; i++) dominant.reWeight();
         
         dominant.addNode();
-        dominant.addConnection();
-        recessive.addNode();
+        recessive.addConnection();
       
         Genome recombination = recombine(dominant, recessive);
         Mutatable child = Mutatable.mutate(recombination);
@@ -81,9 +80,9 @@ public class Crossover extends Genome {
         for (Connection c : child.connections) System.out.println(c);
         System.out.println();
 
-        System.out.println("Potential connections");
-        List<Integer[]> potentialConnections = child.getPotentialConnections();
-        System.out.println("size = " + potentialConnections.size());
-        for (Integer[] line : potentialConnections) System.out.println(line[0] + " -> " + line[1]);
+        System.out.println("Possible connections");
+        List<Integer[]> possibleConnections = child.getPossibleConnections();
+        System.out.println("size = " + possibleConnections.size());
+        for (Integer[] line : possibleConnections) System.out.println(line[0] + " -> " + line[1]);
     }
 }
