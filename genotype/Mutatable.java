@@ -1,17 +1,35 @@
 package genotype;
 
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.List;
 import java.util.ArrayList;
 
 import main.*;
 
 public class Mutatable extends Genome {
+    private Mutatable() {}
 
     public static Mutatable mutate(Genome genome) {
         Mutatable mutatable = new Mutatable();
-        mutatable.nodes = genome.nodes;
         mutatable.connections = genome.connections;
         return mutatable;
+    }
+
+    public List<Node> getLocalNodes() {
+        Set<Integer> nodeIDs = new TreeSet<>();
+        for (Connection c : connections) {
+            if (c.isEnabled()) {
+                nodeIDs.add(c.getIn());
+                nodeIDs.add(c.getOut());
+            }
+        }
+
+        List<Node> localNodes = new ArrayList<>();
+        for (Integer id : nodeIDs) {
+            localNodes.add(getNode(id));
+        }
+        return localNodes;
     }
 
     public boolean hasConnection(int in, int out) { //Returns true if connection exists and is enabled
@@ -31,11 +49,12 @@ public class Mutatable extends Genome {
 
     public List<Integer[]> getPotentialConnections() { //Returns a list of potential connections that currently don't exist.
         List<Integer[]> potentialConnections = new ArrayList<Integer[]>();
+        List<Node> localNodes = getLocalNodes();
         
-        for (int n1 = 0; n1 < nodes.size(); n1++) {
-            float n1Layer = nodes.get(n1).getLayer();
-            for (int n2 = n1+1; n2 < nodes.size(); n2++) {
-                float n2Layer = nodes.get(n2).getLayer();
+        for (int n1 = 0; n1 < localNodes.size(); n1++) {
+            float n1Layer = localNodes.get(n1).getLayer();
+            for (int n2 = n1+1; n2 < localNodes.size(); n2++) {
+                float n2Layer = localNodes.get(n2).getLayer();
                 
                 if (n1Layer != n2Layer) {
                     int in, out;
@@ -50,11 +69,6 @@ public class Mutatable extends Genome {
         
         return potentialConnections;
     }
-
-    // private Node getRandomNode() {
-    //     int index = Resource.random.nextInt(nodes.size());
-    //     return nodes.get(index);
-    // }
 
     public Connection getRandomConnection() { //Gets an enabled connection
         List<Connection> enabledConnections = getEnabledConnections();
@@ -111,54 +125,52 @@ public class Mutatable extends Genome {
 
     public static void main(String... args) {
         int test = 0;
+        Genome genome = null;
         Mutatable mutatable = null;
 
-        System.out.println("TESTING class Mutatable");
-        Genome parent = getFirstGenome();
-        Genome child = new Genome(parent);
         do {
             switch (test) {
             case 0:
-                System.out.println("Calling new Mutatable(getFirstGenome())...");
-                mutatable = mutate(child);
+                System.out.println("Calling genome = getFirstGenome()...");
+                genome = getFirstGenome();
+                System.out.println("Calling mutatable = mutate(genome)...");
+                mutatable = mutate(genome);
             break;
             case 1:
-                System.out.println("Calling mutatable.reWeight()");
+                System.out.println("Calling mutatable.reWeight()...");
                 System.out.println(mutatable.reWeight());
             break;
             case 2:
-                System.out.println("Calling mutatable.addNode()");
+                System.out.println("Calling mutatable.addNode()...");
                 System.out.println(mutatable.addNode());
             break;
             case 3:
-                System.out.println("Calling mutatable.addConnection()");
+                System.out.println("Calling mutatable.addConnection()...");
                 System.out.println(mutatable.addConnection());
+            break;
             }
+           
+            System.out.println("Calling mutatable.getLocalNodes()...");
+            List<Node> localNodes = mutatable.getLocalNodes();
+            System.out.println("size = " + localNodes.size());
+            System.out.println(localNodes);
+            for (Node n : nodes) System.out.println(n);
 
-        System.out.println(child);
-        test++;
-        } while (test < 4);
+            System.out.println("Calling mutatable.getEnabledConnections()...");
+            List<Connection> enabledConnections = mutatable.getEnabledConnections();
+            System.out.println("size = " + enabledConnections.size());
+            System.out.println(enabledConnections);
+            for (Connection c : mutatable.connections) System.out.println(c);
 
-        test = 0;
-        do {
-            switch (test) {
-                case 0:
-                    System.out.println("Calling mutatable.hasConnection(0, 1)...");
-                    System.out.println(mutatable.hasConnection(0, 1));
-                break;
-                case 1:
-                    System.out.println("Calling mutatable.getEnabledConnections().size()...");
-                    System.out.println(mutatable.getEnabledConnections().size());
-                break;
-                case 2:
-                    System.out.println("Calling mutatable.getPotentialConnections().size()...");
-                    System.out.println(mutatable.getPotentialConnections().size());
-                break;
-                case 3:
-                    System.out.println("Calling mutatable.getRandomConnection()...");
-                    System.out.println(mutatable.getRandomConnection());
-                break;
-            }
+            System.out.println("Calling mutatable.getPotentialConnections()...");
+            List<Integer[]> potentialConnections = mutatable.getPotentialConnections();
+            System.out.println("size = " + potentialConnections.size());
+            for (Integer[] line : potentialConnections) System.out.println(line[0] + " -> " + line[1]);
+
+            System.out.println("Calling mutatable.hasConnection(0, 4)...");
+            System.out.println(mutatable.hasConnection(0, 4));
+
+            System.out.println();
             test++;
         } while (test < 4);
     }

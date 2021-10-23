@@ -15,12 +15,12 @@ public class Connection {
         this.innovation = ID.nextInnovationID();
     }
 
-    Connection(Connection parent) {
-        this.in = parent.in;
-        this.out = parent.out;
-        this.weight = parent.weight;
-        this.enabled = parent.enabled;
-        this.innovation = parent.innovation;
+    Connection(Connection gene) {
+        this.in = gene.in;
+        this.out = gene.out;
+        this.weight = gene.weight;
+        this.enabled = gene.enabled;
+        this.innovation = gene.innovation;
     }
 
     void setWeight(double weight) {this.weight = weight;}

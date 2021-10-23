@@ -11,10 +11,10 @@ public class Node {
         this.layer = layer;
     }
 
-    Node(Node parent) {
-        this.id = parent.id;
-        this.type = parent.type;
-        this.layer = parent.layer;
+    Node(Node gene) {
+        this.id = gene.id;
+        this.type = gene.type;
+        this.layer = gene.layer;
     }
 
     static public Node newSensorNode() {
