@@ -3,6 +3,8 @@ package genotype;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.NoSuchElementException;
 
 import main.Settings;
@@ -55,7 +57,35 @@ public class Genome {
         }
     }
 
+    public List<Node> getLocalNodes() { //TODO: Add test for this function
+        Set<Integer> localNodeIDs = new TreeSet<>();
+
+        for (int i = 0; i < nodes.size() && nodes.get(i).getType() != NodeType.HIDDEN; i++) {
+            localNodeIDs.add(nodes.get(i).getID());
+        }
+        for (Connection c : connections) {
+            if (c.isEnabled()) {
+                localNodeIDs.add(c.getIn());
+                localNodeIDs.add(c.getOut());
+            }
+        }
+
+        List<Node> localNodes = new ArrayList<>();
+        for (Integer id : localNodeIDs) {
+            localNodes.add(getNode(id));
+        }
+        return localNodes;
+    }
+
     public List<Connection> getConnections() {return Collections.unmodifiableList(connections);}
+
+    public List<Connection> getEnabledConnections() { //TODO: Add test for this function
+        List<Connection> enabledConnections = new ArrayList<Connection>();
+        for (Connection c: connections) {
+            if (c.isEnabled()) {enabledConnections.add(c);}
+        }
+        return enabledConnections;
+    }
 
     public Connection getConnection(int in, int out) {
         for (Connection c : connections) {

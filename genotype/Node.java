@@ -11,12 +11,6 @@ public class Node {
         this.layer = layer;
     }
 
-    Node(Node gene) {
-        this.id = gene.id;
-        this.type = gene.type;
-        this.layer = gene.layer;
-    }
-
     static public Node newSensorNode() {
         return new Node(NodeType.SENSOR, 0.0f);
     }
@@ -56,15 +50,11 @@ public class Node {
                 System.out.println("Calling newHiddenNode(0.5f)...");
                 node = newHiddenNode(0.5f);
             break;
-            case 3:
-                System.out.println("Calling new Node(node)...");
-                node = new Node(node);
-            break;
             }
             
             System.out.println(node);
             test++;
-        } while (test < 4);
+        } while (test < 3);
     }
 
 }

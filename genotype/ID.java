@@ -5,15 +5,11 @@ class ID {
     private static int innovationID = 0;
 
     static int nextNodeID() {
-        int id = nodeID;
-        nodeID++;
-        return id;
+        return nodeID++;
     }
 
     static int nextInnovationID() {
-        int id = innovationID;
-        innovationID++;
-        return id;
+        return innovationID++;
     }
 
     public static void main(String... args) {
@@ -27,5 +23,8 @@ class ID {
         for (int i = 0; i < 5; i++) {
             System.out.println(nextInnovationID());
         }
+
+        System.out.println("nodeID: " + nodeID);
+        System.out.println("innovationID: " + innovationID);
     }
 }

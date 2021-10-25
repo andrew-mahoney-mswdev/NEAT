@@ -1,7 +1,5 @@
 package genotype;
 
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -14,34 +12,6 @@ public class Mutatable extends Genome {
         Mutatable mutatable = new Mutatable();
         mutatable.connections = genome.connections;
         return mutatable;
-    }
-
-    public List<Node> getLocalNodes() {
-        Set<Integer> localNodeIDs = new TreeSet<>();
-
-        for (int i = 0; i < nodes.size() && nodes.get(i).getType() != NodeType.HIDDEN; i++) {
-            localNodeIDs.add(nodes.get(i).getID());
-        }
-        for (Connection c : connections) {
-            if (c.isEnabled()) {
-                localNodeIDs.add(c.getIn());
-                localNodeIDs.add(c.getOut());
-            }
-        }
-
-        List<Node> localNodes = new ArrayList<>();
-        for (Integer id : localNodeIDs) {
-            localNodes.add(getNode(id));
-        }
-        return localNodes;
-    }
-
-    public List<Connection> getEnabledConnections() {
-        List<Connection> enabledConnections = new ArrayList<Connection>();
-        for (Connection c: connections) {
-            if (c.isEnabled()) {enabledConnections.add(c);}
-        }
-        return enabledConnections;
     }
 
     public List<Integer[]> getPossibleConnections() { //Returns a list of possible connections that do or don't exist.
