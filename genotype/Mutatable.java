@@ -95,6 +95,18 @@ public class Mutatable extends Genome {
         }
     }
 
+    public void applyMutation() {
+        if (Resource.random.nextBoolean()) {
+            reWeight();
+        } else {
+            if (Resource.random.nextBoolean()) {
+                addNode();
+            } else {
+                addConnection();
+            }
+        }
+    }
+
     public static void main(String... args) {
         int test = 0;
         Genome genome = null;

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 
+import main.Resource;
 import main.Settings;
 
 public class Phenome {
@@ -11,7 +12,7 @@ public class Phenome {
     private Genome genome;
     List<Node> localNodes;
 
-    Phenome(Genome genome) {
+    public Phenome(Genome genome) {
         this.genome = genome;              
         localNodes = genome.getLocalNodes();
         
@@ -37,14 +38,14 @@ public class Phenome {
         return localNodes.get(out).getLayer();
     }
 
-    public void putInputs(double[] inputs) { //All inputs should be values between 0 and 1
+    private void putInputs(double[] inputs) { //All inputs should be values between 0 and 1
         if (inputs.length < Settings.SENSOR) throw new IllegalArgumentException("phenome.getInputs() received a number of arguments fewer than Settings.SENSOR");
         for (int i = 0; i < Settings.SENSOR; i++) {
             neurons.put(i, inputs[i]);
         }
     }
 
-    public void run() {
+    private void run() {
         double layer = 0.0;
        
         do {
@@ -68,7 +69,7 @@ public class Phenome {
         } while (layer < 1.0);
     }
 
-    public double[] close() {
+    private double[] close() {
         double[] outputs = new double[Settings.OUTPUT];
 
         int arrayIndex = 0;
@@ -126,15 +127,19 @@ public class Phenome {
 
         System.out.println(genome);
         
-        double[] inputs = new double[]{0.95, 1.0, 0.6};
+        double[] inputs = new double[Settings.SENSOR];
+        for (int i = 0; i < Settings.SENSOR; i++) {
+            inputs[i] = Resource.random.nextDouble();
+        }
+        
         Phenome phenome = new Phenome(genome);
         phenome.putInputs(inputs);
         phenome.run();
         System.out.println(phenome);
-        phenome.close();
+        double[] outputs = phenome.close();
 
         phenome = new Phenome(genome);        
-        double[] outputs = phenome.run(inputs);
+        outputs = phenome.run(inputs);
         for (int i = 0; i < Settings.OUTPUT; i++) {
             System.out.println(Settings.SENSOR + i + ": " + outputs[i]);
         }

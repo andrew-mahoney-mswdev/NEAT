@@ -4,8 +4,7 @@ import java.util.List;
 
 import main.Resource;
 
-public class Crossover extends Genome {
-    private Crossover() {}
+public abstract class Crossover extends Genome {
 
     public static Genome recombine(Genome dominant, Genome recessive) {
         Genome child = new Genome();

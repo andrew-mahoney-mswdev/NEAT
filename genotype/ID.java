@@ -1,6 +1,6 @@
 package genotype;
 
-class ID {
+abstract class ID {
     private static int nodeID = 0;
     private static int innovationID = 0;
 

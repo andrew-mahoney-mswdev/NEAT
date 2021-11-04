@@ -2,7 +2,7 @@ package main;
 
 import java.util.Random;
 
-public class Resource {
+public abstract class Resource {
     static public Random random = new Random();
     static {random.nextInt();}
 
