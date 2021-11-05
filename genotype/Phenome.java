@@ -8,51 +8,55 @@ import main.Resource;
 import main.Settings;
 
 public class Phenome {
-    private Map<Integer, Double> neurons = new HashMap<>();
+    private class Neuron {
+        private double value;
+        private float layer;
+        Neuron(double value, float layer) {this.value = value; this.layer = layer;}
+    }
+
+    private Map<Integer, Neuron> neurons = new HashMap<>();
     private Genome genome;
-    List<Node> localNodes;
 
     public Phenome(Genome genome) {
         this.genome = genome;              
-        localNodes = genome.getLocalNodes();
+        List<Node> localNodes = genome.getLocalNodes();
         
         for (Node n : localNodes) {
-            neurons.put(n.getID(), 0.0);
+            neurons.put(n.getID(), new Neuron(0.0, n.getLayer()));
         }
     }
 
     private void sigmoid(int neuron) {
-        double total = neurons.get(neuron);
+        double total = neurons.get(neuron).value;
         double sigmoid =  1.0 / (1.0 + Math.exp(-total));
-        neurons.put(neuron, sigmoid);
+        neurons.get(neuron).value = sigmoid;
     }
 
     private double fireSynapse(Connection connection) {
         int in = connection.getIn();
         int out = connection.getOut();
-        double valueIn = neurons.get(in);
+        double valueIn = neurons.get(in).value;
         double valueOut = valueIn * connection.getWeight();
-        double currentValueAtOutNode = neurons.get(out);
         
-        neurons.put(out, currentValueAtOutNode + valueOut);
-        return localNodes.get(out).getLayer();
+        neurons.get(out).value += valueOut;
+        return neurons.get(out).layer;
     }
 
-    private void putInputs(double[] inputs) { //All inputs should be values between 0 and 1
+    public void putInputs(double[] inputs) { //All inputs should be values between 0 and 1
         if (inputs.length < Settings.SENSOR) throw new IllegalArgumentException("phenome.getInputs() received a number of arguments fewer than Settings.SENSOR");
         for (int i = 0; i < Settings.SENSOR; i++) {
-            neurons.put(i, inputs[i]);
+            neurons.get(i).value = inputs[i];
         }
     }
 
-    private void run() {
+    public void run() {
         double layer = 0.0;
        
         do {
             double nextLayer = 1.0;
             for (Connection c : genome.getEnabledConnections()) {
                 int in = c.getIn();
-                if (localNodes.get(in).getLayer() == layer) {
+                if (neurons.get(in).layer == layer) {
                     double depth = fireSynapse(c);
                     if (depth < nextLayer) nextLayer = depth;
                 }
@@ -60,31 +64,24 @@ public class Phenome {
             
             layer = nextLayer;
 
-            for (Node n : localNodes) {
-                if (n.getLayer() == layer) {
-                    sigmoid(n.getID());
+            for (Integer id : neurons.keySet()) {
+                if (neurons.get(id).layer == layer) {
+                    sigmoid(id);
                 }
             }
 
         } while (layer < 1.0);
     }
 
-    private double[] close() {
+    public double[] close() {
         double[] outputs = new double[Settings.OUTPUT];
 
-        int arrayIndex = 0;
-        for (int i = Settings.SENSOR; arrayIndex < Settings.OUTPUT; i++) {
-            Node node = localNodes.get(i);
-            if (node.getType() == NodeType.OUTPUT) {
-                int id = node.getID();
-                outputs[arrayIndex] = neurons.get(id);
-                arrayIndex++;
-            }
+        for (int arrayIndex = 0, id = Settings.SENSOR; arrayIndex < Settings.OUTPUT; arrayIndex++, id++) {
+            outputs[arrayIndex] = neurons.get(id).value;
         }
 
         neurons = null;
         genome = null;
-        localNodes = null;
         return outputs;
     }
 
@@ -99,8 +96,8 @@ public class Phenome {
     public String toString() {
         String endl = "\n";
         String value = "Phenome" + endl;
-        for (Integer i : neurons.keySet()) {
-            value += (i + ": " + neurons.get(i) + endl);
+        for (Integer id : neurons.keySet()) {
+            value += (id + ": " + neurons.get(id).value + endl);
         }
         return value;
     }
@@ -118,7 +115,7 @@ public class Phenome {
             }
         } while (loop == true);
 
-        for (int c = 0; c < 6; c++) {
+        for (int c = 0; c < 1; c++) {
             mutatable.addNode();
             mutatable.addConnection();
         }
@@ -131,7 +128,7 @@ public class Phenome {
         for (int i = 0; i < Settings.SENSOR; i++) {
             inputs[i] = Resource.random.nextDouble();
         }
-        
+       
         Phenome phenome = new Phenome(genome);
         phenome.putInputs(inputs);
         phenome.run();
