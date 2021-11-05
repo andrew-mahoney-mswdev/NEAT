@@ -96,6 +96,15 @@ public class Genome {
         return null;
     }
 
+    public Connection getConnection(int in, int out, boolean enabled) {
+        for (Connection c : connections) {
+            if (c.getIn() == in && c.getOut() == out && c.isEnabled() == enabled) {
+                return c;
+            }
+        }
+        return null;
+    }
+
     public String toString() {
         String endl = "\n";
         String value = "Genome" + endl;

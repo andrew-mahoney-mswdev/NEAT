@@ -83,7 +83,7 @@ public class Mutatable extends Genome {
             int index = Resource.random.nextInt(possibleConnections.size());
             Integer[] line = possibleConnections.get(index);
 
-            Connection oldConnection = getConnection(line[0], line[1]);
+            Connection oldConnection = getConnection(line[0], line[1], true);
             if (oldConnection != null) oldConnection.disable();
 
             double weight = Resource.nextSignedDouble(Settings.MUTATION_NEW_CONNECTION_WEIGHT_MAX);
@@ -130,6 +130,7 @@ public class Mutatable extends Genome {
             break;
             case 3:
                 System.out.println("Calling mutatable.addConnection()...");
+                System.out.println(mutatable.addConnection());
                 System.out.println(mutatable.addConnection());
             break;
             }
