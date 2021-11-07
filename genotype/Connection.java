@@ -12,7 +12,7 @@ public class Connection {
         this.out = out;
         this.weight = weight;
         this.enabled = true;
-        this.innovation = ID.nextInnovationID();
+        this.innovation = ID.nextInnovationID(in, out);
     }
 
     Connection(Connection gene) {

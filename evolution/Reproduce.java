@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import genotype.Genome;
 import genotype.Mutatable;
+import genotype.ID;
 import main.Settings;
 
 public abstract class Reproduce {
@@ -14,6 +15,7 @@ public abstract class Reproduce {
         List<EvolvedNetwork> parents = new ArrayList<>(Population.getNetworks().subList(0, numParents));
         List<EvolvedNetwork> networks = Population.getNetworks();
         networks.clear();
+        ID.resetInnovationIDs();
 
         for (int p = 0; p < numParents; p++) {
             EvolvedNetwork parent = parents.get(p);

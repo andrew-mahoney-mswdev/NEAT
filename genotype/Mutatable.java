@@ -63,7 +63,7 @@ public class Mutatable extends Genome {
         float toLayer = getNode(out).getLayer();
         float layer = (fromLayer + toLayer) / 2;
 
-        Node node = Node.newHiddenNode(layer);
+        Node node = Node.newHiddenNode(layer, in, out);
         int id = node.getID();
         Connection leadIn = new Connection(in, id, 1.0);
         Connection leadOut = new Connection(id, out, weight);
