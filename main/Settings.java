@@ -1,10 +1,12 @@
 package main;
 
+import tasks.*;
+
 public abstract class Settings {
-    public static final Task TASK = new main.SampleMatchingTask();
+    public static final Task TASK = new EasyCounting();
 
     public static final int PARENTS_PER_GENERATION = 100;
-    public static final int CHILDREN_PER_PARENT = 10;
+    public static final int CHILDREN_PER_PARENT = 20;
     public static final int TASKS_PER_GENERATION = 100;
 
     public static final double MUTATION_WEIGHT_SHIFT_MAX = 1.0;
