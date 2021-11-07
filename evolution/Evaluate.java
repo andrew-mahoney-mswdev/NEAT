@@ -11,6 +11,18 @@ import genotype.Phenome;
 public abstract class Evaluate {
     private static final Task task = Settings.TASK;
     private static List<EvolvedNetwork> networks;
+    private static double[] inputs;
+    private static int solution;
+
+    static {
+        readyTask();
+    }
+
+    private static void readyTask() {
+        task.next();
+        inputs = task.getInputs();
+        solution = task.getSolution();
+    }
 
     private static int getHighestOutput(double[] outputs) {
         int highestOutput = 0;
@@ -24,20 +36,20 @@ public abstract class Evaluate {
         return highestOutput;
     }
 
-    private static void taskAssessment() {
-        task.next();
-        double[] inputs = task.getInputs();
-        int solution = task.getSolution();
+    private static void assessNetwork(int index) {
+        EvolvedNetwork evolvedNetwork = networks.get(index);
+        Genome genome = evolvedNetwork.getGenome();
+        Phenome phenome = new Phenome(genome);
+        double[] outputs = phenome.run(inputs);
+        int highestOutput = getHighestOutput(outputs);
+        if (highestOutput == solution) {
+            evolvedNetwork.addFitness();
+        }
+    }
 
+    private static void assessAllNetworks() {
         for (int i = 0; i < networks.size(); i++) {
-            EvolvedNetwork evolvedNetwork = networks.get(i);
-            Genome genome = evolvedNetwork.getGenome();
-            Phenome phenome = new Phenome(genome);
-            double[] outputs = phenome.run(inputs);
-            int highestOutput = getHighestOutput(outputs);
-            if (highestOutput == solution) {
-                evolvedNetwork.addFitness();
-            }
+            assessNetwork(i);
         }
     }
 
@@ -49,13 +61,15 @@ public abstract class Evaluate {
         }
 
         for (int count = 0; count < Settings.TASKS_PER_GENERATION; count++) {
-            taskAssessment();
+            readyTask();
+            assessAllNetworks();
         }
 
-        for (int i = 0; i < Population.SIZE; i++) {
+        for (int i = 0; i < networks.size(); i++) {
             if (networks.get(i).getFitness() == Settings.TASKS_PER_GENERATION) {
                 for (int count = Settings.TASKS_PER_GENERATION; count < Settings.TASKS_FOR_OPTIMAL; count++) {
-                    taskAssessment();
+                    readyTask();
+                    assessNetwork(i);
                 }
             }
         }
