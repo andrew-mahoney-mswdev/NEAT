@@ -43,6 +43,13 @@ public abstract class Evaluate {
 
     public static void go() {
         networks = Population.getNetworks();
+
+        for (EvolvedNetwork n : networks) {
+            if (n.getFitness() > 0) {
+                n.resetFitness();
+            }
+        }
+
         for (int count = 0; count < Settings.TASKS_PER_GENERATION; count++) {
             taskAssessment();
         }

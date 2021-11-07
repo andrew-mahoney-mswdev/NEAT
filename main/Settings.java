@@ -1,9 +1,9 @@
 package main;
 
 public abstract class Settings {
-    public static final Task TASK = new main.SampleCountingTask();
+    public static final Task TASK = new main.SampleMatchingTask();
 
-    public static final int POPULATION_SIZE = 100;
+    public static final int PARENTS_PER_GENERATION = 100;
     public static final int CHILDREN_PER_PARENT = 10;
     public static final int TASKS_PER_GENERATION = 100;
 
