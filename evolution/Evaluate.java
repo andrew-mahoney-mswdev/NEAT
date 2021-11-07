@@ -45,15 +45,21 @@ public abstract class Evaluate {
         networks = Population.getNetworks();
 
         for (EvolvedNetwork n : networks) {
-            if (n.getFitness() > 0) {
-                n.resetFitness();
-            }
+            n.resetFitness();
         }
 
         for (int count = 0; count < Settings.TASKS_PER_GENERATION; count++) {
             taskAssessment();
         }
-        //TODO: If a network has solved every problem, give it a large series of problems to see if it has solved the entire task.
+
+        for (int i = 0; i < Population.SIZE; i++) {
+            if (networks.get(i).getFitness() == Settings.TASKS_PER_GENERATION) {
+                for (int count = Settings.TASKS_PER_GENERATION; count < Settings.TASKS_FOR_OPTIMAL; count++) {
+                    taskAssessment();
+                }
+            }
+        }
+
         Collections.sort(networks);
     }
 }

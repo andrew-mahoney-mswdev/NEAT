@@ -7,7 +7,9 @@ public abstract class Settings {
 
     public static final int PARENTS_PER_GENERATION = 100;
     public static final int CHILDREN_PER_PARENT = 20;
-    public static final int TASKS_PER_GENERATION = 100;
+    
+    public static final int TASKS_PER_GENERATION = 60;
+    public static final int TASKS_FOR_OPTIMAL = 600;
 
     public static final double MUTATION_WEIGHT_SHIFT_MAX = 1.0;
     public static final double MUTATION_NEW_CONNECTION_WEIGHT_MAX = 5.0;

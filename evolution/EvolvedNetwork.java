@@ -5,12 +5,11 @@ import main.Resource;
 
 class EvolvedNetwork implements Comparable<EvolvedNetwork> {
     private Genome genome;
-    private int fitness;
-    int random;
+    private int fitness = 0;
+    int random = 0;
 
     EvolvedNetwork(Genome g) {
         genome = g;
-        resetFitness();
     }
 
     @Override
