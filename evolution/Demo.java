@@ -30,7 +30,7 @@ public abstract class Demo {
                 System.exit(0);
             }
             
-            Reproduce.go();
+            Reproduce.sexual();
             generation++;
         } while (true);
     }
