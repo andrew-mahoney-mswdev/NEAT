@@ -11,7 +11,7 @@ import genotype.Crossover;
 
 
 public abstract class Reproduce {
-    private static final int numParents = Settings.PARENTS_PER_GENERATION;
+    private static final int numParents = Settings.POPULATION / Settings.CHILDREN_PER_PARENT;
 
     public static void sexual() {
         List<EvolvedNetwork> parents = new ArrayList<>(Population.getNetworks().subList(0, numParents));

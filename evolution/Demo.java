@@ -16,7 +16,7 @@ public abstract class Demo {
 
             int highest, lowest;
             highest = Population.getNetworks().get(0).getFitness();
-            lowest = Population.getNetworks().get(Population.SIZE-1).getFitness();
+            lowest = Population.getNetworks().get(Settings.POPULATION-1).getFitness();
             
             System.out.println(lowest + "-" + highest);
             if (highest == Settings.TASKS_FOR_OPTIMAL) {

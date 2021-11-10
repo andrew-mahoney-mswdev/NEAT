@@ -53,12 +53,16 @@ public abstract class Evaluate {
         }
     }
 
-    public static void go() {
-        networks = Population.getNetworks();
-
+    public static void resetAllFitness() {
         for (EvolvedNetwork n : networks) {
             n.resetFitness();
         }
+    }
+
+    public static void go() {
+        networks = Population.getNetworks();
+
+        resetAllFitness();
 
         for (int count = 0; count < Settings.TASKS_PER_GENERATION; count++) {
             readyTask();
