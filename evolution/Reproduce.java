@@ -29,7 +29,7 @@ public abstract class Reproduce {
                 if (p1 < p2) recombination = Crossover.recombine(parent1, parents.get(p2).getGenome());
                 else recombination = Crossover.recombine(parents.get(p2).getGenome(), parent1);
                 Mutatable child = Mutatable.mutate(recombination);
-                child.applyMutation();
+                child.applyMutation(); //If more than one mutation is to be applied here, then ID will need to be revised to ensure repeat innovation numbers are allocated sequentially within a genome.
                 networks.add(new EvolvedNetwork(child));
             }
         }
