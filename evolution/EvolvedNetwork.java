@@ -3,7 +3,7 @@ package evolution;
 import genotype.Genome;
 import main.Resource;
 
-class EvolvedNetwork implements Comparable<EvolvedNetwork> {
+public class EvolvedNetwork implements Comparable<EvolvedNetwork> {
     private Genome genome;
     private int fitness = 0;
     int random = 0;
@@ -22,12 +22,12 @@ class EvolvedNetwork implements Comparable<EvolvedNetwork> {
         }
     }
 
-    public void resetFitness() {
+    void resetFitness() {
         fitness = 0;
         random = Resource.random.nextInt(Integer.MAX_VALUE);
     }
 
-    public void addFitness() {
+    void addFitness() {
         fitness++;
     }
 

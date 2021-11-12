@@ -2,17 +2,22 @@ package evolution;
 
 import genotype.Genome;
 import genotype.Phenome;
+import taxonomy.Classify;
 import main.Settings;
 
 public abstract class Demo {
     public static void main(String... args) {      
         System.out.println("Seeding initial population...");
         Population.initialise();
+        Classify.initialise(Population.getNetworks().get(0));
+        Classify.print();
 
         int generation = 0;
         do {
             System.out.println("Generation " + generation);
             Evaluate.go();
+            Classify.go();
+            Classify.print();
 
             int highest, lowest;
             highest = Population.getNetworks().get(0).getFitness();

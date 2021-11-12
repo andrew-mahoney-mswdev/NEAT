@@ -2,6 +2,7 @@ package evolution;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import genotype.Genome;
 import genotype.Mutatable;
@@ -16,6 +17,10 @@ public abstract class Population {
 
     static void setNetworks(List<EvolvedNetwork> _networks) {
         networks = _networks;
+    }
+
+    public static List<EvolvedNetwork> getUnmodifiableNetworks() {
+        return Collections.unmodifiableList(networks);
     }
 
     public static void initialise() {

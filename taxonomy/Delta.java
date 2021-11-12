@@ -1,4 +1,4 @@
-package evolution;
+package taxonomy;
 
 import java.util.List;
 
@@ -6,12 +6,13 @@ import genotype.Connection;
 import genotype.Crossover;
 import genotype.Genome;
 import genotype.ID;
-import genotype.Mutatable; //for testing
 import main.Settings;
 
-public class Speciate {
+import genotype.Mutatable; //for testing
 
-    public static double calculateDelta(Genome a, Genome b) {
+public abstract class Delta {
+
+    public static double calculate(Genome a, Genome b) {
         int n = 0; //Size of largest genome
         int d = 0; //Number of disjoint genes
         int e = 0; //Number of excess genes
@@ -89,6 +90,6 @@ public class Speciate {
 
         System.out.println(c1);
         System.out.println(c2);
-        System.out.println("delta " + calculateDelta(c1, c2));
+        System.out.println("delta " + calculate(c1, c2));
     }
 }
