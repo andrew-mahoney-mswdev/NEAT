@@ -1,6 +1,7 @@
 package evolution;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import genotype.Connection;
 import genotype.Crossover;
@@ -10,6 +11,31 @@ import genotype.Mutatable; //for testing
 import main.Settings;
 
 public class Speciate {
+
+    public static void initialise() {
+        EvolvedNetwork first = Population.getNetworks().get(0);
+        Species.addTaxon(first);
+    }
+
+    public static void go() {
+        List<EvolvedNetwork> networks = Population.getNetworks();
+        List<Species> taxa = Species.getTaxa();
+
+        for (int n = 0; n < networks.size(); n++) {
+            for (int t = 0; t < taxa.size(); t++) {
+                EvolvedNetwork en = networks.get(n);
+                Species taxon = taxa.get(t);
+                Genome g = en.getGenome();
+                Genome s = taxon.getSpecimen();
+
+                if (calculateDelta(g, s) < Settings.DELTA_THRESHOLD) {
+                    en.setSpecies(taxon.getID());
+                } else { //New species detected
+                    Species.addTaxon(en);
+                }
+            }
+        }
+    }
 
     public static double calculateDelta(Genome a, Genome b) {
         int n = 0; //Size of largest genome

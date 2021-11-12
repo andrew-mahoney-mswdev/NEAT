@@ -5,8 +5,9 @@ import main.Resource;
 
 class EvolvedNetwork implements Comparable<EvolvedNetwork> {
     private Genome genome;
+    private int species = -1; //Set to -1 for now for debugging
     private int fitness = 0;
-    int random = 0;
+    private int random = 0;
 
     EvolvedNetwork(Genome g) {
         genome = g;
@@ -27,12 +28,20 @@ class EvolvedNetwork implements Comparable<EvolvedNetwork> {
         random = Resource.random.nextInt(Integer.MAX_VALUE);
     }
 
+    void setSpecies(int species) {
+        this.species = species;
+    }
+
     public void addFitness() {
         fitness++;
     }
 
     public Genome getGenome() {
         return genome;
+    }
+
+    public int getSpecies() {
+        return species;
     }
 
     public int getFitness() {
