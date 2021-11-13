@@ -5,12 +5,15 @@ import java.util.List;
 
 import main.Settings;
 import main.Task;
+import taxonomy.Classify;
+import taxonomy.Species;
 import genotype.Genome;
 import genotype.Phenome;
 
 public abstract class Evaluate {
     private static final Task task = Settings.TASK;
     private static List<EvolvedNetwork> networks;
+    private static List<Species> taxa;
     private static double[] inputs;
     private static int solution;
 
@@ -59,6 +62,18 @@ public abstract class Evaluate {
         }
     }
 
+    private static double adjustFitness() {
+        double total = 0.0;
+        for (Species s : taxa) {
+            List<EvolvedNetwork> members = s.getMembers();
+            for (EvolvedNetwork en : members) {
+                en.adjustedFitness = (double)en.getFitness() / members.size();
+            }
+            total += s.sumAdjustedFitness();
+        }
+        return total;
+    }
+
     public static void go() {
         networks = Population.getNetworks();
 
@@ -77,6 +92,14 @@ public abstract class Evaluate {
                 }
             }
         }
+
+        taxa = Classify.getTaxa();
+        double populationFitness = adjustFitness();
+        for (Species s : taxa) { //Assign offspring
+            double offspring = (s.getAdjustedFitnessTotal() / populationFitness) * Settings.POPULATION;
+            s.setOffspring((int)offspring);
+        }
+
 
         Collections.sort(networks);
     }

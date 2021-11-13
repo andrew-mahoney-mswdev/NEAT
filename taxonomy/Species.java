@@ -13,6 +13,8 @@ public class Species {
 
     private int id;
     private Genome specimen;
+    private double adjustedFitnessTotal;
+    private int offspring = 0;
     List<EvolvedNetwork> members = new ArrayList<>();
 
     Species(EvolvedNetwork specimen) {
@@ -21,10 +23,22 @@ public class Species {
         members.add(specimen);
     }
 
+    public double sumAdjustedFitness() {
+        adjustedFitnessTotal = 0.0;
+        for (EvolvedNetwork en : members) {
+            adjustedFitnessTotal += en.getAdjustedFitness();
+        }
+        return adjustedFitnessTotal;
+    }
+
     public void chooseSpecimen() {
         int random = Resource.random.nextInt(members.size());
         EvolvedNetwork specimen = members.get(random);
         this.specimen = specimen.getGenome();
+    }
+
+    public void setOffspring(int numberOffspring) {
+        this.offspring = numberOffspring;
     }
 
     public int getID() {
@@ -35,11 +49,19 @@ public class Species {
         return specimen;
     }
 
+    public double getAdjustedFitnessTotal() {
+        return adjustedFitnessTotal;
+    }
+
+    public int getOffspring() {
+        return offspring;
+    }
+
     public List<EvolvedNetwork> getMembers() {
         return Collections.unmodifiableList(members);
     }
 
     public String toString() {
-        return id + ": " + members.size();
+        return id + ": " + members.size() + ", fitness: " + adjustedFitnessTotal + ", offspring: " + offspring;
     }
 }

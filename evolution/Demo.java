@@ -10,13 +10,12 @@ public abstract class Demo {
         System.out.println("Seeding initial population...");
         Population.initialise();
         Classify.initialise(Population.getNetworks().get(0));
-        Classify.print();
 
         int generation = 0;
         do {
             System.out.println("Generation " + generation);
-            Evaluate.go();
             Classify.go();
+            Evaluate.go();
             Classify.print();
 
             int highest, lowest;

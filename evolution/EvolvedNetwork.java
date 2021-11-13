@@ -6,6 +6,7 @@ import main.Resource;
 public class EvolvedNetwork implements Comparable<EvolvedNetwork> {
     private Genome genome;
     private int fitness = 0;
+    double adjustedFitness = 0.0;
     int random = 0;
 
     EvolvedNetwork(Genome g) {
@@ -24,6 +25,7 @@ public class EvolvedNetwork implements Comparable<EvolvedNetwork> {
 
     void resetFitness() {
         fitness = 0;
+        adjustedFitness = 0.0;
         random = Resource.random.nextInt(Integer.MAX_VALUE);
     }
 
@@ -37,5 +39,9 @@ public class EvolvedNetwork implements Comparable<EvolvedNetwork> {
 
     public int getFitness() {
         return fitness;
+    }
+
+    public double getAdjustedFitness() {
+        return adjustedFitness;
     }
 }
