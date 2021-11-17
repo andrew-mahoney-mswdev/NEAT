@@ -1,11 +1,8 @@
 package tasks;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
 
 import main.Task;
-import main.Resource;
 
 /**
  * This task provides a random spread of inputs with the value 1.0 and must return the number of inputs with that value.
@@ -39,24 +36,53 @@ public class Counting implements Task {
         return solution;
     }
 
+    int problem = 0;
     @Override
     public boolean next() {
-        solution = Resource.random.nextInt(outputs);
-        inputs = new double[INPUTS];
-        
-        List<Integer> indices = new ArrayList<>(INPUTS);
-        for (int i = 0; i < INPUTS; i++) indices.add(i);
-        for (int i = 0; i < solution; i++) {
-            Integer inputNode = indices.get(Resource.random.nextInt(INPUTS-i));
-            inputs[inputNode] = 1.0;
-            indices.remove(inputNode);
+        switch(problem) {
+            case 0:
+                inputs = new double[] {0.0, 0.0, 0.0};
+                solution = 0;
+            break;
+            case 1:
+                inputs = new double[] {1.0, 0.0, 0.0};
+                solution = 1;
+            break;
+            case 2:
+                inputs = new double[] {0.0, 1.0, 0.0};
+                solution = 1;
+            break;
+            case 3:
+                inputs = new double[] {0.0, 0.0, 1.0};
+                solution = 1;
+            break;
+            case 4:
+                inputs = new double[] {1.0, 1.0, 0.0};
+                solution = 2;
+            break;
+            case 5:
+                inputs = new double[] {1.0, 0.0, 1.0};
+                solution = 2;
+            break;
+            case 6:
+                inputs = new double[] {0.0, 1.0, 1.0};
+                solution = 2;
+            break;
+            case 7:
+                inputs = new double[] {1.0, 1.0, 1.0};
+                solution = 3;
+            break;
         }
+
+        problem++;
+        if (problem == 8) problem = 0;
+
         return true;
     }
-    
+
     public static void main(String... args) {
         Task sct = new Counting();
-        for (int count = 0; count < 3; count++) {
+        for (int count = 0; count < 8; count++) {
             System.out.println("Solution: " + sct.getSolution());
             double[] sctInputs = sct.getInputs();
             for (int i = 0; i < INPUTS; i++) {
