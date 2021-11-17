@@ -61,6 +61,10 @@ public class Species {
         return Collections.unmodifiableList(members);
     }
 
+    public int size() {
+        return members.size();
+    }
+
     public String toString() {
         return id + ": " + members.size() + ", fitness: " + adjustedFitnessTotal + ", offspring: " + offspring;
     }

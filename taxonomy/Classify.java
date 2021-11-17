@@ -54,6 +54,12 @@ public abstract class Classify {
         taxa.removeIf((s) -> s.members.isEmpty());
     }
 
+    public static void sort() {
+        for (Species s : taxa) {
+            Collections.sort(s.members);
+        }
+    }
+
     public static void print() {
         System.out.println("Species");
         for (Species s : taxa) {

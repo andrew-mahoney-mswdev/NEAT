@@ -102,5 +102,6 @@ public abstract class Evaluate {
 
 
         Collections.sort(networks);
+        Classify.sort();
     }
 }
