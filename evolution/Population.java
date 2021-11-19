@@ -36,4 +36,8 @@ public abstract class Population {
         }
     }
 
+    public static void initialise4Testing(List<EvolvedNetwork> testNetworks) {
+        networks = testNetworks;
+    }
+
 }

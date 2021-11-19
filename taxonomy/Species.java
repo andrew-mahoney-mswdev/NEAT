@@ -42,4 +42,29 @@ public class Species {
     public String toString() {
         return id + ": " + members.size();
     }
+
+    public static void main(String... args) {
+        Genome genome = new Genome(Genome.getFirstGenome());
+        EvolvedNetwork en = EvolvedNetwork.newEvolvedNetwork4Testing(genome);
+        Species species = new Species(en);
+        for (int count = 0; count < 4; count++) {
+            genome = new Genome(genome);
+            en = EvolvedNetwork.newEvolvedNetwork4Testing(genome);
+            species.members.add(en);
+        }
+
+        System.out.println(species);
+        System.out.println("ID: " + species.getID());
+        
+        species.chooseSpecimen();
+        for (int i = 0; i < 5; i++) {
+            if (species.members.get(i).getGenome() == species.getSpecimen()) {
+                System.out.println("specimen: " + i);
+            }
+        }
+
+        for (int i = 0; i < species.members.size(); i++) {
+            System.out.println(species.members.get(i));
+        }
+    }
 }

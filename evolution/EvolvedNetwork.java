@@ -11,7 +11,7 @@ public class EvolvedNetwork implements Comparable<EvolvedNetwork> {
     EvolvedNetwork(Genome g) {
         genome = g;
     }
-
+    
     @Override
     public int compareTo(EvolvedNetwork en) {
         int compareFitness = en.fitness - this.fitness;
@@ -37,5 +37,18 @@ public class EvolvedNetwork implements Comparable<EvolvedNetwork> {
 
     public int getFitness() {
         return fitness;
+    }
+
+    public String toString() {
+        String endl = "\n";
+        String value = "Evolved Network" + endl;
+        value += "fitness: " + fitness + endl;
+        value += "random: " + random + endl;
+        value += genome + endl;
+        return value;
+    }
+
+    public static EvolvedNetwork newEvolvedNetwork4Testing(Genome g) {
+        return new EvolvedNetwork(g);
     }
 }

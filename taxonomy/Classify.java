@@ -4,6 +4,8 @@ import java.util.List;
 
 import evolution.EvolvedNetwork;
 import evolution.Population;
+import genotype.Genome;
+import genotype.Mutatable;
 import main.Settings;
 
 import java.util.ArrayList;
@@ -57,4 +59,64 @@ public abstract class Classify {
             System.out.println(s);
         }
     }
+
+    public static void main(String... args) {
+        Genome a = Genome.getFirstGenome();
+        Genome b = Genome.getFirstGenome();
+        Mutatable alpha = Mutatable.mutate(a);
+        Mutatable beta = Mutatable.mutate(b);
+
+        for (int count = 0; count < 5; count++) {
+            alpha.applyMutation();
+            beta.applyMutation();
+        }
+
+        List<EvolvedNetwork> testNetworks = new ArrayList<>();
+        EvolvedNetwork first = EvolvedNetwork.newEvolvedNetwork4Testing(alpha);
+        testNetworks.add(first);
+        testNetworks.add(EvolvedNetwork.newEvolvedNetwork4Testing(beta));
+        for (int count = 0; count < 5; count++) {
+            Genome cloneAlpha = new Genome(alpha);
+            Genome cloneBeta = new Genome(beta);
+            Mutatable childAlpha = Mutatable.mutate(cloneAlpha);
+            Mutatable childBeta = Mutatable.mutate(cloneBeta);
+            childAlpha.applyMutation();
+            childBeta.applyMutation();
+            testNetworks.add(EvolvedNetwork.newEvolvedNetwork4Testing(childAlpha));
+            testNetworks.add(EvolvedNetwork.newEvolvedNetwork4Testing(childBeta));
+        }
+
+        Population.initialise4Testing(testNetworks);
+
+        Classify.initialise(first);
+        Classify.go();
+        Classify.print();
+
+        //Specimen testing - Configure Delta Threshold to identify 2 species
+        Species firstTaxon = taxa.get(0);
+        Species secondTaxon = taxa.get(1);
+        
+        Genome specimenAlpha = firstTaxon.getSpecimen();
+        Genome specimenBeta = secondTaxon.getSpecimen();
+        
+        for (int i = 0; i < testNetworks.size(); i++) {
+            if (testNetworks.get(i).getGenome() == specimenAlpha) {
+                System.out.println("Alpha specimen is at testNetworks:" + i);
+                for (int j = 0; j < firstTaxon.members.size(); j++) {
+                    if (testNetworks.get(i).getGenome() == firstTaxon.members.get(j).getGenome()) {
+                        System.out.println("Alpha specimen is at taxa.get(0):" + j);
+                    }
+                }
+            }
+            if (testNetworks.get(i).getGenome() == specimenBeta) {
+                System.out.println("Beta specimen is at testNetworks:" + i);
+                for (int j = 0; j < secondTaxon.members.size(); j++) {
+                    if (testNetworks.get(i).getGenome() == secondTaxon.members.get(j).getGenome()) {
+                        System.out.println("Beta specimen is at taxa.get(1):" + j);
+                    }
+                }
+            }
+        }
+    }
+
 }
