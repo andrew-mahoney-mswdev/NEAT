@@ -19,15 +19,16 @@ public abstract class Demo {
             Classify.go();
             Classify.print();
 
-            int highest, lowest;
+            double highest, lowest;
             highest = Population.getNetworks().get(0).getFitness();
             lowest = Population.getNetworks().get(Settings.POPULATION-1).getFitness();
             
-            System.out.println(lowest + "-" + highest);
-            if (highest == Settings.TASKS_FOR_OPTIMAL) {
-                Genome genome = Population.getNetworks().get(0).getGenome();
-                System.out.println(genome);
-                Phenome phenome = new Phenome(genome);
+            System.out.println(highest + "-" + lowest);
+
+            Genome top = Population.getNetworks().get(0).getGenome();
+            if (Evaluate.checkOptimality(top)) {
+                System.out.println(top);
+                Phenome phenome = new Phenome(top);
                 Settings.TASK.next();
                 phenome.putInputs(Settings.TASK.getInputs());
                 phenome.run();

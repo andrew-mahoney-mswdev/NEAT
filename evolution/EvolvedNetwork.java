@@ -5,20 +5,21 @@ import main.Resource;
 
 public class EvolvedNetwork implements Comparable<EvolvedNetwork> {
     private Genome genome;
-    private int fitness = 0;
-    int random = 0;
+    private double fitness;
+    private int random;
 
     EvolvedNetwork(Genome g) {
         genome = g;
+        resetFitness();
     }
     
     @Override
-    public int compareTo(EvolvedNetwork en) {
-        int compareFitness = en.fitness - this.fitness;
-        if (compareFitness != 0) {
-            return compareFitness;
-        } else {
-            return en.random - this.random;
+    public int compareTo(EvolvedNetwork en) { //Higher fitness sorts first
+        if (fitness < en.fitness) return 1;
+        else if (fitness > en.fitness) return -1;
+        else { //Fitness is equal
+            if (random < en.random) return 1;
+            else return -1;
         }
     }
 
@@ -27,15 +28,15 @@ public class EvolvedNetwork implements Comparable<EvolvedNetwork> {
         random = Resource.random.nextInt(Integer.MAX_VALUE);
     }
 
-    void addFitness() {
-        fitness++;
+    void addFitness(double value) {
+        fitness += value;
     }
 
     public Genome getGenome() {
         return genome;
     }
 
-    public int getFitness() {
+    public double getFitness() {
         return fitness;
     }
 
@@ -50,5 +51,36 @@ public class EvolvedNetwork implements Comparable<EvolvedNetwork> {
 
     public static EvolvedNetwork newEvolvedNetwork4Testing(Genome g) {
         return new EvolvedNetwork(g);
+    }
+
+    public static void main(String... args) {
+        Genome genome = new Genome(Genome.getFirstGenome());
+        
+        EvolvedNetwork en = new EvolvedNetwork(genome);
+        System.out.println(en.toString());
+        System.out.println("Calling addFitness(1.0)...");
+        en.addFitness(1.0);
+        System.out.println(en.toString());
+        System.out.println("Calling resetFitness()...");
+        en.resetFitness();
+        System.out.println(en.toString());
+
+        EvolvedNetwork other = new EvolvedNetwork(genome);
+        other.addFitness(1.0);
+        System.out.println("Calling compareTo() against a network with higher fitness");
+        System.out.println(en.compareTo(other));
+
+        en = new EvolvedNetwork(genome);
+        en.addFitness(1.0);
+        other = new EvolvedNetwork(genome);
+        System.out.println("Calling compareTo() against a network with lower fitness");
+        System.out.println(en.compareTo(other));
+
+        en = new EvolvedNetwork(genome);
+        other = new EvolvedNetwork(genome);
+        System.out.println("Calling compareTo() on networks with equal fitness");
+        System.out.println("This network has a random value of: " + en.random);
+        System.out.println("The other network has a random value of: " + other.random);
+        System.out.println(en.compareTo(other));
     }
 }
