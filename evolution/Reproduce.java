@@ -3,6 +3,7 @@ package evolution;
 import java.util.List;
 import java.util.ArrayList;
 
+import main.Resource;
 import main.Settings;
 import genotype.ID;
 import genotype.Genome;
@@ -29,7 +30,11 @@ public abstract class Reproduce {
                 if (p1 < p2) recombination = Crossover.recombine(parent1, parents.get(p2).getGenome());
                 else recombination = Crossover.recombine(parents.get(p2).getGenome(), parent1);
                 Mutatable child = Mutatable.mutate(recombination);
-                child.applyMutation(); //If more than one mutation is to be applied here, then ID will need to be revised to ensure repeat innovation numbers are allocated sequentially within a genome.
+                int mutationCount = Resource.random.nextInt(Settings.MAX_MUTATIONS) + 1;
+                for (int count = 0; count < mutationCount; count++) {
+                    child.applyMutation();
+                    child.sort();
+                }
                 networks.add(new EvolvedNetwork(child));
             }
         }

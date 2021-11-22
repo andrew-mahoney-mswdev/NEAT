@@ -2,6 +2,8 @@ package genotype;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import main.*;
 
@@ -45,6 +47,15 @@ public class Mutatable extends Genome {
         return enabledConnections.get(index);
     }
 
+    public boolean hasInnovation(int innovationID) {
+        for (int i = 0; i < connections.size(); i++) {
+            if (connections.get(i).getInnovation() == innovationID) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Connection reWeight() {
         Connection connection = getRandomConnection();
         double weight = connection.getWeight();
@@ -68,12 +79,15 @@ public class Mutatable extends Genome {
         Connection leadIn = new Connection(in, id, 1.0);
         Connection leadOut = new Connection(id, out, weight);
 
-        nodes.add(node);
-        connections.add(leadIn);
-        connections.add(leadOut);
-        oldConnection.disable();
-        
-        return node;
+        if (!hasInnovation(leadIn.getInnovation())) {
+            nodes.add(node);
+            connections.add(leadIn);
+            connections.add(leadOut);
+            oldConnection.disable();
+            return node;
+        }
+
+        return null;
     }
 
     public Connection addConnection() {
@@ -88,11 +102,14 @@ public class Mutatable extends Genome {
 
             double weight = Resource.nextSignedDouble(Settings.MUTATION_NEW_CONNECTION_WEIGHT_MAX);
             Connection connection = new Connection(line[0], line[1], weight);
-            connections.add(connection);
-            return connection;
-        } else {
-            return null;
+            
+            if (!hasInnovation(connection.getInnovation())) {
+                connections.add(connection);
+                return connection;
+            }
         }
+        
+        return null;
     }
 
     public void applyMutation() {
@@ -105,6 +122,10 @@ public class Mutatable extends Genome {
                 addConnection();
             }
         }
+    }
+
+    public void sort() {
+        Collections.sort(connections, Comparator.comparingInt(Connection::getInnovation));
     }
 
     public static void main(String... args) {
