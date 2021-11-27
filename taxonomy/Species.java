@@ -8,7 +8,7 @@ import genotype.Genome;
 import main.Resource;
 import evolution.EvolvedNetwork;
 
-public class Species {
+public class Species implements Comparable<Species>{
     private static int speciesID = 0;
 
     private int id;
@@ -38,6 +38,15 @@ public class Species {
         return fitness;
     }
 
+    @Override
+    public int compareTo(Species s) {
+        if (s.fitness - this.fitness > 0)
+            return 1;
+        else if (s.fitness - this.fitness < 0)
+            return -1;
+        else return 0;
+    }
+
     public int getID() {
         return id;
     }
@@ -46,12 +55,24 @@ public class Species {
         return specimen;
     }
 
+    public double getFitness() {
+        return fitness;
+    }
+
+    public int getOffspring() {
+        return offspring;
+    }
+
     public List<EvolvedNetwork> getMembers() {
         return Collections.unmodifiableList(members);
     }
 
+    public int size() {
+        return members.size();
+    }
+
     public String toString() {
-        return id + ":\t" + members.size() + "\t" + calculateFitness() + "\t" + offspring;
+        return id + ":\t" + members.size() + "\t" + getFitness() + "\t" + getOffspring();
     }
 
     public static void main(String... args) {
@@ -78,4 +99,5 @@ public class Species {
             System.out.println(species.members.get(i));
         }
     }
+
 }

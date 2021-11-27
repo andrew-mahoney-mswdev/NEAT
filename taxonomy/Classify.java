@@ -1,14 +1,14 @@
 package taxonomy;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import evolution.EvolvedNetwork;
 import evolution.Population;
 import genotype.Genome;
 import genotype.Mutatable;
 import main.Settings;
-
-import java.util.ArrayList;
 
 public abstract class Classify {
     private static List<Species> taxa;
@@ -24,16 +24,12 @@ public abstract class Classify {
         double totalFitness = 0.0;
         for (Species s : taxa) {
             totalFitness += s.calculateFitness();
+            s.offspring = 0;
         }
 
-        int space = Settings.POPULATION;
+        sort();
         for (Species s : taxa) {
-            s.offspring = (int)(((s.fitness / totalFitness) * (double)Settings.POPULATION) / Settings.SPECIES_SELECT_PROPORTION);
-            space -= s.offspring;
-            if (space <= 0) {
-                s.offspring += space;
-                break;
-            }
+            s.offspring = (int)((s.fitness / totalFitness) * Settings.POPULATION);
         }
     }
 
@@ -69,10 +65,18 @@ public abstract class Classify {
         taxa.removeIf((s) -> s.members.isEmpty());
     }
 
+    public static void sort() {
+        Collections.sort(taxa);
+    }
+
+    public static List<Species> getTaxa() {
+        return Collections.unmodifiableList(taxa);
+    }
+
     public static void print() {
         System.out.println("Species");
-        for (Species s : taxa) {
-            System.out.println(s);
+        for (int i = 0; i < taxa.size(); i++) {
+            System.out.println(taxa.get(i));
         }
     }
 
