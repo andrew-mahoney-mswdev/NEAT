@@ -7,6 +7,7 @@ public abstract class Settings {
 
     public static final int POPULATION = 2000;
     public static final int CHILDREN_PER_PARENT = 20;
+    public static final double SPECIES_SELECT_PROPORTION = 0.9;
     
     public static final int TASKS_PER_GENERATION = 8;
     public static final int TASKS_FOR_OPTIMAL = 8;

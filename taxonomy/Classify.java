@@ -20,6 +20,23 @@ public abstract class Classify {
         go();
     }
 
+    public static void calculateOffspring() {
+        double totalFitness = 0.0;
+        for (Species s : taxa) {
+            totalFitness += s.calculateFitness();
+        }
+
+        int space = Settings.POPULATION;
+        for (Species s : taxa) {
+            s.offspring = (int)(((s.fitness / totalFitness) * (double)Settings.POPULATION) / Settings.SPECIES_SELECT_PROPORTION);
+            space -= s.offspring;
+            if (space <= 0) {
+                s.offspring += space;
+                break;
+            }
+        }
+    }
+
     public static void go() {
         for (Species s : taxa) {
             s.members.clear();
@@ -43,14 +60,13 @@ public abstract class Classify {
             }
         }
 
-        for (int i = 0; i < taxa.size(); i++) {
-            Species species = taxa.get(i);
-            if (species.members.isEmpty()) {
-                taxa.remove(species);
-            } else {
-                species.chooseSpecimen();
+        for (Species s : taxa) {
+            if (!s.members.isEmpty()) {
+                s.chooseSpecimen();
             }
         }
+
+        taxa.removeIf((s) -> s.members.isEmpty());
     }
 
     public static void print() {
@@ -61,6 +77,7 @@ public abstract class Classify {
     }
 
     public static void main(String... args) {
+        //Delta threshold should be set to 0.05 for this to work.
         Genome a = Genome.getFirstGenome();
         Genome b = Genome.getFirstGenome();
         Mutatable alpha = Mutatable.mutate(a);

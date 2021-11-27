@@ -13,6 +13,8 @@ public class Species {
 
     private int id;
     private Genome specimen;
+    double fitness;
+    int offspring;
     List<EvolvedNetwork> members = new ArrayList<>();
 
     Species(EvolvedNetwork specimen) {
@@ -25,6 +27,15 @@ public class Species {
         int random = Resource.random.nextInt(members.size());
         EvolvedNetwork specimen = members.get(random);
         this.specimen = specimen.getGenome();
+    }
+
+    public double calculateFitness() {
+        double total = 0.0;
+        for (EvolvedNetwork en : members) {
+            total += en.getFitness();
+        }
+        fitness = total / members.size();
+        return fitness;
     }
 
     public int getID() {
@@ -40,7 +51,7 @@ public class Species {
     }
 
     public String toString() {
-        return id + ": " + members.size();
+        return id + ":\t" + members.size() + "\t" + calculateFitness() + "\t" + offspring;
     }
 
     public static void main(String... args) {
