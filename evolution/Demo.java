@@ -17,13 +17,13 @@ public abstract class Demo {
             System.out.println("Generation " + generation);
             Evaluate.go();
             Classify.go();
+            Classify.calculateOffspring();
             Classify.print();
 
-            int highest, lowest;
+            int highest;
             highest = Population.getNetworks().get(0).getFitness();
-            lowest = Population.getNetworks().get(Settings.POPULATION-1).getFitness();
             
-            System.out.println(lowest + "-" + highest);
+            System.out.println("Highest: " + highest);
             if (highest == Settings.TASKS_FOR_OPTIMAL) {
                 Genome genome = Population.getNetworks().get(0).getGenome();
                 System.out.println(genome);
@@ -35,7 +35,7 @@ public abstract class Demo {
                 System.exit(0);
             }
             
-            Reproduce.sexual();
+            Reproduce.speciate();
             generation++;
         } while (true);
     }

@@ -26,10 +26,28 @@ public abstract class Classify {
             totalFitness += s.calculateFitness();
             s.offspring = 0;
         }
-
+        
         sort();
-        for (Species s : taxa) {
-            s.offspring = (int)((s.fitness / totalFitness) * Settings.POPULATION);
+
+        double fitnessSelect = totalFitness * Settings.SPECIES_SELECT_PROPORTION;
+        double fitnessSelectConsumed = 0.0;
+        for (int i = 0; i < taxa.size(); i++) {
+            Species s = taxa.get(i);
+
+            double fitnessShare;
+            if (fitnessSelectConsumed + s.fitness <= fitnessSelect) {
+                fitnessShare = s.fitness;
+                fitnessSelectConsumed += s.fitness;
+            } else { //Selectable fitness is consumed, only remaining selected fitness can be used.
+                fitnessShare = fitnessSelect - fitnessSelectConsumed;
+                fitnessSelectConsumed = fitnessSelect;
+            }
+
+            s.offspring = (int)((fitnessShare / fitnessSelect) * Settings.POPULATION);
+
+            if (fitnessSelectConsumed == fitnessSelect) {
+                break;
+            }
         }
     }
 
