@@ -13,6 +13,8 @@ public abstract class Settings {
     public static final int TASKS_FOR_OPTIMAL = 600;
 
     public static final int MAX_MUTATIONS = 2;
+    public static final double MUTATION_REWEIGHT_PROBABILTY = 0.9;
+    public static final double MUTATION_NEW_CONNECTION_PROBABILITY = 0.067; //The probabilty of a new node is 1 minus the sum of these two probabilites.
     public static final double MUTATION_WEIGHT_SHIFT_MAX = 1.0;
     public static final double MUTATION_NEW_CONNECTION_WEIGHT_MAX = 5.0;
 

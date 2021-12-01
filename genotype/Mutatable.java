@@ -113,13 +113,14 @@ public class Mutatable extends Genome {
     }
 
     public void applyMutation() {
-        if (Resource.random.nextBoolean()) {
+        double value = Resource.random.nextDouble();
+        if (value < Settings.MUTATION_REWEIGHT_PROBABILTY) {
             reWeight();
         } else {
-            if (Resource.random.nextBoolean()) {
-                addNode();
-            } else {
+            if (value < Settings.MUTATION_NEW_CONNECTION_PROBABILITY + Settings.MUTATION_REWEIGHT_PROBABILTY) {
                 addConnection();
+            } else {
+                addNode();
             }
         }
     }
