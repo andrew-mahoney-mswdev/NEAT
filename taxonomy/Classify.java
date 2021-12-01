@@ -8,6 +8,7 @@ import evolution.EvolvedNetwork;
 import evolution.Population;
 import genotype.Genome;
 import genotype.Mutatable;
+import main.Resource;
 import main.Settings;
 
 public abstract class Classify {
@@ -62,7 +63,7 @@ public abstract class Classify {
                 Species species = taxa.get(i);
                 double delta = Delta.calculate(en.getGenome(), species.getSpecimen());
                 
-                if (delta < Settings.DELTA_THRESHOLD) {
+                if (delta < Resource.getDelta()) {
                     species.members.add(en);
                     classified = true;
                     break;
@@ -89,6 +90,10 @@ public abstract class Classify {
 
     public static List<Species> getTaxa() {
         return Collections.unmodifiableList(taxa);
+    }
+
+    public static int getSpeciesCount() {
+        return taxa.size();
     }
 
     public static void print() {

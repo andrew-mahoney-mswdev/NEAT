@@ -3,6 +3,7 @@ package evolution;
 import genotype.Genome;
 import genotype.Phenome;
 import taxonomy.Classify;
+import main.Resource;
 import main.Settings;
 
 public abstract class Demo {
@@ -12,11 +13,14 @@ public abstract class Demo {
         Classify.initialise(Population.getNetworks().get(0));
         Classify.print();
 
+        int record = 0;
         int generation = 0;
         do {
             System.out.println("Generation " + generation);
             Evaluate.go();
             Classify.go();
+            System.out.println("Species: " + Classify.getSpeciesCount());
+            System.out.println("delta " + (float)Resource.getDelta());
             Classify.calculateOffspring();
             Classify.print();
 
@@ -24,6 +28,8 @@ public abstract class Demo {
             highest = Population.getNetworks().get(0).getFitness();
             
             System.out.println("Highest: " + highest);
+            if (highest > record) record = highest;
+            System.out.println("Record: " + record);
             if (highest == Settings.TASKS_FOR_OPTIMAL) {
                 Genome genome = Population.getNetworks().get(0).getGenome();
                 System.out.println(genome);
@@ -36,6 +42,8 @@ public abstract class Demo {
             }
             
             Reproduce.speciate();
+            Resource.adjustDelta();
+            System.out.println();
             generation++;
         } while (true);
     }
