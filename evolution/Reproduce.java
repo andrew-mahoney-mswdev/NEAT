@@ -15,7 +15,7 @@ import taxonomy.Classify;
 public abstract class Reproduce {
     private static List<EvolvedNetwork> networks;
 
-    private static void birth(Genome parent) {
+    static void birth(Genome parent) {
         Genome clone = new Genome(parent);
         Mutatable child = Mutatable.mutate(clone);
         int mutationCount = Resource.random.nextInt(Settings.MAX_MUTATIONS) + 1;

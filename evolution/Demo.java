@@ -11,7 +11,6 @@ public abstract class Demo {
         System.out.println("Seeding initial population...");
         Population.initialise();
         Classify.initialise(Population.getNetworks().get(0));
-        Classify.print();
 
         int record = 0;
         int generation = 0;

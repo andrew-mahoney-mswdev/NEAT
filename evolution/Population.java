@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import genotype.Genome;
-import genotype.Mutatable;
 import main.Settings;
 
 public abstract class Population {
@@ -27,13 +26,14 @@ public abstract class Population {
         networks = new ArrayList<EvolvedNetwork>();
 
         Genome luca = Genome.getFirstGenome();
-        for (int i = 0; i < Settings.POPULATION; i++) {
+        int parents = Settings.POPULATION / Settings.CHILDREN_PER_PARENT;
+        for (int i = 0; i < parents; i++) {
             Genome lucaClone = new Genome(luca);
-            Mutatable child = Mutatable.mutate(lucaClone);
-            child.reWeight();
-            EvolvedNetwork network = new EvolvedNetwork(child);
+            EvolvedNetwork network = new EvolvedNetwork(lucaClone);
             networks.add(network);
         }
+
+        Reproduce.fission(); //Apply a basic set of mutations to everything.
     }
 
     public static void initialise4Testing(List<EvolvedNetwork> testNetworks) {
