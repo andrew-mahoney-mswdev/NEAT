@@ -72,7 +72,7 @@ public class Species implements Comparable<Species>{
     }
 
     public String toString() {
-        return id + ":\t" + members.size() + "\t" + getFitness() + "\t" + getOffspring();
+        return id + ":\t" + members.size() + "\t" + String.format("%.2f", getFitness()) + "\t" + getOffspring();
     }
 
     public static void main(String... args) {
