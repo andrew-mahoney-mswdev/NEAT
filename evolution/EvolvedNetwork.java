@@ -6,10 +6,12 @@ import main.Resource;
 public class EvolvedNetwork implements Comparable<EvolvedNetwork> {
     private Genome genome;
     private int fitness = 0;
+    private int bornOn;
     int random = 0;
 
     EvolvedNetwork(Genome g) {
         genome = g;
+        bornOn = Resource.getGeneration();
     }
     
     @Override
@@ -18,7 +20,12 @@ public class EvolvedNetwork implements Comparable<EvolvedNetwork> {
         if (compareFitness != 0) {
             return compareFitness;
         } else {
-            return en.random - this.random;
+            int compareAge = en.getAge() - this.getAge();
+            if (compareAge != 0) {
+                return compareAge;
+            } else {
+                return en.random - this.random;
+            }
         }
     }
 
@@ -29,6 +36,10 @@ public class EvolvedNetwork implements Comparable<EvolvedNetwork> {
 
     void addFitness() {
         fitness++;
+    }
+
+    public int getAge() {
+        return Resource.getGeneration() - bornOn;
     }
 
     public Genome getGenome() {

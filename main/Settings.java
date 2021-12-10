@@ -5,9 +5,9 @@ import tasks.*;
 public abstract class Settings {
     public static final Task TASK = new CountingSequential();
 
-    public static final int POPULATION = 10000;
+    public static final int POPULATION = 20000;
     public static final int CHILDREN_PER_PARENT = 20;
-    public static final double SPECIES_SELECT_PROPORTION = 0.98;
+    public static final double SPECIES_SELECT_PROPORTION = 0.99;
     
     public static final int TASKS_PER_GENERATION = 16;
     public static final int TASKS_FOR_OPTIMAL = 16;
@@ -19,7 +19,7 @@ public abstract class Settings {
     public static final double MUTATION_NEW_CONNECTION_WEIGHT_MAX = 5.0;
 
     public static final double DELTA_THRESHOLD_AT_START = 0.15;
-    public static final int TARGET_SPECIES_COUNT = 50;
+    public static final int TARGET_SPECIES_COUNT = 200;
     public static final double DELTA_INCREMENT = 0.01;
 
     public static final double EXCESS_COEFFICIENT = 0.25;

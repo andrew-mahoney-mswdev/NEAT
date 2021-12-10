@@ -97,9 +97,20 @@ public abstract class Classify {
     }
 
     public static void print() {
+        int species2Display = 30;
         System.out.println("Species");
-        for (int i = 0; i < taxa.size(); i++) {
-            System.out.println(taxa.get(i));
+        if (taxa.size() >= species2Display) {
+            for (int i = 0; i < species2Display-10; i++) {
+                System.out.println(taxa.get(i));
+            }
+            System.out.println("...");
+            for (int i = taxa.size()-10; i < taxa.size(); i++) {
+                System.out.println(taxa.get(i));
+            }
+        } else {
+            for (int i = 0; i < taxa.size(); i++) {
+                System.out.println(taxa.get(i));
+            }
         }
     }
 

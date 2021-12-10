@@ -33,6 +33,17 @@ public abstract class Resource {
         return delta;
     }
 
+    //Generation counter
+    private static int generation = 0;
+
+    public static void nextGeneration() {
+        generation++;
+    }
+
+    public static int getGeneration() {
+        return generation;
+    }
+
     public static void main(String... args) {
         System.out.println("TESTING class Resource");
         for (int i = 1; i <= 5; i++) {

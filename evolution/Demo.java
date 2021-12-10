@@ -1,5 +1,6 @@
 package evolution;
 
+
 import genotype.Genome;
 import genotype.Phenome;
 import taxonomy.Classify;
@@ -13,11 +14,11 @@ public abstract class Demo {
         Classify.initialise(Population.getNetworks().get(0));
 
         int record = 0;
-        int generation = 0;
         do {
-            System.out.println("Generation " + generation);
+            System.out.println("Generation " + Resource.getGeneration());
             Evaluate.go();
             Classify.go();
+            System.out.println("New parents: " + String.format("%.1f", (double)Reproduce.getNewParentCount() / Reproduce.getParentCount() * 100) + "% of " + Reproduce.getParentCount());
             System.out.println("Species: " + Classify.getSpeciesCount());
             System.out.println("delta " + (float)Resource.getDelta());
             Classify.calculateOffspring();
@@ -43,7 +44,7 @@ public abstract class Demo {
             Reproduce.speciate();
             Resource.adjustDelta();
             System.out.println();
-            generation++;
+            Resource.nextGeneration();
         } while (true);
     }
 

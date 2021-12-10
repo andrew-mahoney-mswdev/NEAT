@@ -14,6 +14,26 @@ import taxonomy.Classify;
 
 public abstract class Reproduce {
     private static List<EvolvedNetwork> networks;
+    private static ParentsCounter parentCount = new ParentsCounter();
+
+    private static class ParentsCounter {
+        private int number = 0;
+        private int initial = 0;
+    }
+
+    static int getParentCount() {
+        return parentCount.number;
+    }
+
+    static int getNewParentCount() {
+        return parentCount.initial;
+    }
+
+    private static void addParent(EvolvedNetwork parent) {
+        networks.add(parent);
+        parentCount.number++;
+        if (parent.getAge() <= 1) parentCount.initial++;
+    }
 
     static void birth(Genome parent) {
         Genome clone = new Genome(parent);
@@ -28,16 +48,22 @@ public abstract class Reproduce {
 
     private static void fission(Species s) { //Called by speciate when there is only one member so recombination is not possible.
         EvolvedNetwork parent = s.getMembers().get(0);
-        for (int c = 0; c < s.getOffspring(); c++) {
+        addParent(parent);
+        for (int c = 1; c < s.getOffspring(); c++) {
             birth(parent.getGenome());
         }
     }
 
     private static void recombine(Species species) {
+        List<EvolvedNetwork> members = species.getMembers();
         int numParents = species.size() / Settings.CHILDREN_PER_PARENT;
         if (numParents < 2) numParents = 2;
 
-        for (int c = 0, parent2Index = 1; c < species.getOffspring(); c++, parent2Index++) {
+        for (int i = 0; i < numParents; i++) {
+            addParent(members.get(i));
+        }
+
+        for (int c = numParents, parent2Index = 1; c < species.getOffspring(); c++, parent2Index++) {
             int parent1Index = (c / Settings.CHILDREN_PER_PARENT) % numParents;
 
             if (parent2Index == parent1Index) parent2Index++;
@@ -46,8 +72,8 @@ public abstract class Reproduce {
                 else parent2Index = 1;
             }
           
-            EvolvedNetwork parent1 = species.getMembers().get(parent1Index);
-            EvolvedNetwork parent2 = species.getMembers().get(parent2Index);
+            EvolvedNetwork parent1 = members.get(parent1Index);
+            EvolvedNetwork parent2 = members.get(parent2Index);
             Genome child;
             if (parent1.compareTo(parent2) < 0) child = Crossover.recombine(parent1.getGenome(), parent2.getGenome());
             else child = Crossover.recombine(parent2.getGenome(), parent1.getGenome());
@@ -59,6 +85,7 @@ public abstract class Reproduce {
         List<Species> taxa = Classify.getTaxa();
         networks = Population.getNetworks();
         networks.clear();
+        parentCount = new ParentsCounter();
         ID.resetInnovationIDs();
 
         for (Species s : taxa) {
