@@ -14,25 +14,9 @@ import taxonomy.Classify;
 
 public abstract class Reproduce {
     private static List<EvolvedNetwork> networks;
-    private static ParentsCounter parentCount = new ParentsCounter();
 
-    private static class ParentsCounter {
-        private int number = 0;
-        private int initial = 0;
-    }
-
-    static int getParentCount() {
-        return parentCount.number;
-    }
-
-    static int getNewParentCount() {
-        return parentCount.initial;
-    }
-
-    private static void addParent(EvolvedNetwork parent) {
-        networks.add(parent);
-        parentCount.number++;
-        if (parent.getAge() <= 1) parentCount.initial++;
+    private static boolean parentReset() {
+        return Resource.getGeneration() % Settings.RESET_PARENTS_GENERATION_MULTIPLE == 0;
     }
 
     static void birth(Genome parent) {
@@ -48,8 +32,14 @@ public abstract class Reproduce {
 
     private static void fission(Species s) { //Called by speciate when there is only one member so recombination is not possible.
         EvolvedNetwork parent = s.getMembers().get(0);
-        addParent(parent);
-        for (int c = 1; c < s.getOffspring(); c++) {
+        int countStart = 0;
+        
+        if (!parentReset()) {
+            networks.add(parent);
+            countStart = 1;
+        }
+        
+        for (int c = countStart; c < s.getOffspring(); c++) {
             birth(parent.getGenome());
         }
     }
@@ -58,12 +48,16 @@ public abstract class Reproduce {
         List<EvolvedNetwork> members = species.getMembers();
         int numParents = species.size() / Settings.CHILDREN_PER_PARENT;
         if (numParents < 2) numParents = 2;
+        int countStart = 0;
 
-        for (int i = 0; i < numParents; i++) {
-            addParent(members.get(i));
+        if (!parentReset()) {
+            for (int i = 0; i < numParents; i++) {
+                networks.add(members.get(i));
+            }
+            countStart = numParents;
         }
 
-        for (int c = numParents, parent2Index = 1; c < species.getOffspring(); c++, parent2Index++) {
+        for (int c = countStart, parent2Index = 1; c < species.getOffspring(); c++, parent2Index++) {
             int parent1Index = (c / Settings.CHILDREN_PER_PARENT) % numParents;
 
             if (parent2Index == parent1Index) parent2Index++;
@@ -83,9 +77,9 @@ public abstract class Reproduce {
     
     public static void speciate() {
         List<Species> taxa = Classify.getTaxa();
+        
         networks = Population.getNetworks();
         networks.clear();
-        parentCount = new ParentsCounter();
         ID.resetInnovationIDs();
 
         for (Species s : taxa) {
