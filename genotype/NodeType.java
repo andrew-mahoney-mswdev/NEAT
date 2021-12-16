@@ -1,3 +1,3 @@
 package genotype;
 
-enum NodeType {SENSOR, HIDDEN, OUTPUT}
+public enum NodeType {SENSOR, HIDDEN, OUTPUT}

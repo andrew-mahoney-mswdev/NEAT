@@ -2,65 +2,58 @@ package genotype;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import main.*;
 
 public class Mutatable extends Genome {
+    private Mutatable() {}
 
     public static Mutatable mutate(Genome genome) {
         Mutatable mutatable = new Mutatable();
-        mutatable.nodes = genome.nodes;
         mutatable.connections = genome.connections;
         return mutatable;
     }
 
-    public boolean hasConnection(int in, int out) { //Returns true if connection exists and is enabled
-        for (Connection c : connections) {
-            if (c.isEnabled() && c.getIn() == in && c.getOut() == out) return true;
-        }
-        return false;
-    }
-
-    public List<Connection> getEnabledConnections() {
-        List<Connection> enabledConnections = new ArrayList<Connection>();
-        for (Connection c: connections) {
-            if (c.isEnabled()) {enabledConnections.add(c);}
-        }
-        return enabledConnections;
-    }
-
-    public List<Integer[]> getPotentialConnections() { //Returns a list of potential connections that currently don't exist.
-        List<Integer[]> potentialConnections = new ArrayList<Integer[]>();
+    public List<Integer[]> getPossibleConnections() { //Returns a list of possible connections that do or don't exist.
+        List<Integer[]> possibleConnections = new ArrayList<Integer[]>();
+        List<Node> localNodes = getLocalNodes();
         
-        for (int n1 = 0; n1 < nodes.size(); n1++) {
-            float n1Layer = nodes.get(n1).getLayer();
-            for (int n2 = n1+1; n2 < nodes.size(); n2++) {
-                float n2Layer = nodes.get(n2).getLayer();
+        for (int i1 = 0; i1 < localNodes.size(); i1++) {
+            Node node1 = localNodes.get(i1);
+            float node1Layer = node1.getLayer();
+            for (int i2 = i1+1; i2 < localNodes.size(); i2++) {
+                Node node2 = localNodes.get(i2);
+                float node2Layer = node2.getLayer();
                 
-                if (n1Layer != n2Layer) {
+                if (node1Layer != node2Layer) {
                     int in, out;
-                    if (n1Layer < n2Layer) {in = n1; out = n2;}
-                    else {out = n1; in = n2;}
+                    if (node1Layer < node2Layer) {in = node1.getID(); out = node2.getID();}
+                    else {out = node1.getID(); in = node2.getID();}
 
-                    if (!hasConnection(in, out))
-                        potentialConnections.add(new Integer[]{in, out});
+                    possibleConnections.add(new Integer[]{in, out});
                 }
             }
         }
         
-        return potentialConnections;
+        return possibleConnections;
     }
-
-    // private Node getRandomNode() {
-    //     int index = Resource.random.nextInt(nodes.size());
-    //     return nodes.get(index);
-    // }
 
     public Connection getRandomConnection() { //Gets an enabled connection
         List<Connection> enabledConnections = getEnabledConnections();
 
         int index = Resource.random.nextInt(enabledConnections.size());
         return enabledConnections.get(index);
+    }
+
+    public boolean hasInnovation(int innovationID) {
+        for (int i = 0; i < connections.size(); i++) {
+            if (connections.get(i).getInnovation() == innovationID) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Connection reWeight() {
@@ -81,84 +74,107 @@ public class Mutatable extends Genome {
         float toLayer = getNode(out).getLayer();
         float layer = (fromLayer + toLayer) / 2;
 
-        Node node = Node.newHiddenNode(layer);
+        Node node = Node.newHiddenNode(layer, in, out);
         int id = node.getID();
         Connection leadIn = new Connection(in, id, 1.0);
         Connection leadOut = new Connection(id, out, weight);
 
-        nodes.add(node);
-        connections.add(leadIn);
-        connections.add(leadOut);
-        oldConnection.disable();
-        
-        return node;
+        if (!hasInnovation(leadIn.getInnovation())) {
+            nodes.add(node);
+            connections.add(leadIn);
+            connections.add(leadOut);
+            oldConnection.disable();
+            return node;
+        }
+
+        return null;
     }
 
     public Connection addConnection() {
-        List<Integer[]> potentialConnections = getPotentialConnections();
+        List<Integer[]> possibleConnections = getPossibleConnections();
 
-        if (potentialConnections.size() > 0) {
-            int index = Resource.random.nextInt(potentialConnections.size());
-            Integer[] line = potentialConnections.get(index);
+        if (possibleConnections.size() > 0) {
+            int index = Resource.random.nextInt(possibleConnections.size());
+            Integer[] line = possibleConnections.get(index);
+
+            Connection oldConnection = getConnection(line[0], line[1], true);
+            if (oldConnection != null) oldConnection.disable();
+
             double weight = Resource.nextSignedDouble(Settings.MUTATION_NEW_CONNECTION_WEIGHT_MAX);
             Connection connection = new Connection(line[0], line[1], weight);
-            connections.add(connection);
-            return connection;
-        } else {
-            return null;
+            
+            if (!hasInnovation(connection.getInnovation())) {
+                connections.add(connection);
+                return connection;
+            }
         }
+        
+        return null;
+    }
+
+    public void applyMutation() {
+        double value = Resource.random.nextDouble();
+        if (value < Settings.MUTATION_REWEIGHT_PROBABILTY) {
+            reWeight();
+        } else {
+            if (value < Settings.MUTATION_NEW_CONNECTION_PROBABILITY + Settings.MUTATION_REWEIGHT_PROBABILTY) {
+                addConnection();
+            } else {
+                addNode();
+            }
+        }
+    }
+
+    public void sort() {
+        Collections.sort(connections, Comparator.comparingInt(Connection::getInnovation));
     }
 
     public static void main(String... args) {
         int test = 0;
+        Genome genome = null;
         Mutatable mutatable = null;
 
-        System.out.println("TESTING class Mutatable");
-        Genome parent = getFirstGenome();
-        Genome child = new Genome(parent);
         do {
             switch (test) {
             case 0:
-                System.out.println("Calling new Mutatable(getFirstGenome())...");
-                mutatable = mutate(child);
+                System.out.println("Calling genome = getFirstGenome()...");
+                genome = getFirstGenome();
+                System.out.println("Calling mutatable = mutate(genome)...");
+                mutatable = mutate(genome);
             break;
             case 1:
-                System.out.println("Calling mutatable.reWeight()");
+                System.out.println("Calling mutatable.reWeight()...");
                 System.out.println(mutatable.reWeight());
             break;
             case 2:
-                System.out.println("Calling mutatable.addNode()");
+                System.out.println("Calling mutatable.addNode()...");
                 System.out.println(mutatable.addNode());
             break;
             case 3:
-                System.out.println("Calling mutatable.addConnection()");
+                System.out.println("Calling mutatable.addConnection()...");
                 System.out.println(mutatable.addConnection());
+                System.out.println(mutatable.addConnection());
+            break;
             }
+           
+            System.out.println("Calling mutatable.getLocalNodes()...");
+            List<Node> localNodes = mutatable.getLocalNodes();
+            System.out.println("size = " + localNodes.size());
+            System.out.println(localNodes);
+            for (Node n : nodes) System.out.println(n);
 
-        System.out.println(child);
-        test++;
-        } while (test < 4);
+            System.out.println("Calling mutatable.getEnabledConnections()...");
+            List<Connection> enabledConnections = mutatable.getEnabledConnections();
+            System.out.println("size = " + enabledConnections.size());
+            System.out.println(enabledConnections);
+            System.out.println(mutatable);
 
-        test = 0;
-        do {
-            switch (test) {
-                case 0:
-                    System.out.println("Calling mutatable.hasConnection(0, 1)...");
-                    System.out.println(mutatable.hasConnection(0, 1));
-                break;
-                case 1:
-                    System.out.println("Calling mutatable.getEnabledConnections().size()...");
-                    System.out.println(mutatable.getEnabledConnections().size());
-                break;
-                case 2:
-                    System.out.println("Calling mutatable.getPotentialConnections().size()...");
-                    System.out.println(mutatable.getPotentialConnections().size());
-                break;
-                case 3:
-                    System.out.println("Calling mutatable.getRandomConnection()...");
-                    System.out.println(mutatable.getRandomConnection());
-                break;
-            }
+            System.out.println("Calling mutatable.getPossibleConnections()...");
+            List<Integer[]> possibleConnections = mutatable.getPossibleConnections();
+            System.out.println("size = " + possibleConnections.size());
+            for (Integer[] line : possibleConnections) System.out.println(line[0] + " -> " + line[1]);
+
+            System.out.println();
             test++;
         } while (test < 4);
     }

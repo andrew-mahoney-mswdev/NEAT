@@ -11,10 +11,10 @@ public class Node {
         this.layer = layer;
     }
 
-    Node(Node parent) {
-        this.id = parent.id;
-        this.type = parent.type;
-        this.layer = parent.layer;
+    private Node(NodeType type, float layer, int in, int out) {
+        this.id = ID.nextNodeID(in, out);
+        this.type = type;
+        this.layer = layer;
     }
 
     static public Node newSensorNode() {
@@ -25,8 +25,8 @@ public class Node {
         return new Node(NodeType.OUTPUT, 1.0f);
     }
 
-    static public Node newHiddenNode(float layer) {
-        return new Node(NodeType.HIDDEN, layer);
+    static public Node newHiddenNode(float layer, int in, int out) {
+        return new Node(NodeType.HIDDEN, layer, in, out);
     }
 
     public int getID() {return id;}
@@ -53,18 +53,14 @@ public class Node {
                 node = newOutputNode();
             break;
             case 2:
-                System.out.println("Calling newHiddenNode(0.5f)...");
-                node = newHiddenNode(0.5f);
-            break;
-            case 3:
-                System.out.println("Calling new Node(node)...");
-                node = new Node(node);
+                System.out.println("Calling newHiddenNode(0.5f, 0, 1)...");
+                node = newHiddenNode(0.5f, 0, 1);
             break;
             }
             
             System.out.println(node);
             test++;
-        } while (test < 4);
+        } while (test < 3);
     }
 
 }
